@@ -22,8 +22,8 @@ def draw_text(text, x, y):
 
 # create food with different effects
 class Food:
-    def __init__(self, snake):
-        self.type = random.choice(["normal", "speed", "danger"])
+    def __init__(self, snake, food_type=None):
+        self.type = food_type or random.choice(["normal", "speed", "danger"])
         self.position = self.generate_position(snake)
 
     def generate_position(self, snake):
@@ -46,11 +46,22 @@ class Food:
         pygame.draw.rect(screen, color, (*self.position, BLOCK_SIZE, BLOCK_SIZE))
 
 
+# keep danger fruit from taking over the board
+def create_food(snake, foods):
+    danger_count = sum(1 for food in foods if food.type == "danger")
+    available_types = ["normal", "speed"]
+    if danger_count < 2:
+        available_types.append("danger")
+    return Food(snake, random.choice(available_types))
+
+
 # reset the full game state after starting or restarting
 def reset_game():
     snake = [(300, 300)]
     direction = (BLOCK_SIZE, 0)
-    foods = [Food(snake) for _ in range(3)]
+    foods = []
+    while len(foods) < 3:
+        foods.append(create_food(snake, foods))
     speed = 10
     game_over = False
     return snake, direction, foods, speed, game_over
@@ -122,7 +133,7 @@ while running:
                     speed += 2
 
                 foods.remove(collided_food)
-                foods.append(Food(snake))
+                foods.append(create_food(snake, foods))
 
             for _ in range(segments_to_remove):
                 if snake:
