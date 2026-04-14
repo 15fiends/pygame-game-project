@@ -3,6 +3,7 @@ import random
 
 pygame.init()
 
+# set up the game window
 WIDTH, HEIGHT = 600, 600
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_caption("Snake: Power-Up Chaos")
@@ -10,6 +11,7 @@ pygame.display.set_caption("Snake: Power-Up Chaos")
 clock = pygame.time.Clock()
 BLOCK_SIZE = 20
 
+# set up font for score and game over text
 font = pygame.font.SysFont(None, 36)
 
 
@@ -18,6 +20,7 @@ def draw_text(text, x, y):
     screen.blit(img, (x, y))
 
 
+# create food with different effects
 class Food:
     def __init__(self, snake):
         self.type = random.choice(["normal", "speed", "danger"])
@@ -43,6 +46,7 @@ class Food:
         pygame.draw.rect(screen, color, (*self.position, BLOCK_SIZE, BLOCK_SIZE))
 
 
+# reset the full game state after starting or restarting
 def reset_game():
     snake = [(300, 300)]
     direction = (BLOCK_SIZE, 0)
@@ -56,9 +60,11 @@ snake, direction, foods, speed, game_over = reset_game()
 running = True
 
 
+# main game loop
 while running:
     screen.fill((0, 0, 0))
 
+    # handle player input and restart
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
@@ -77,6 +83,7 @@ while running:
             if game_over and event.key == pygame.K_r:
                 snake, direction, foods, speed, game_over = reset_game()
 
+    # update movement, collisions, and score
     if not game_over:
         previous_length = len(snake)
         head_x, head_y = snake[0]
@@ -86,29 +93,36 @@ while running:
             new_head[1] < 0 or new_head[1] >= HEIGHT):
             game_over = True
 
-        if new_head in snake:
+        collided_food = None
+        segments_to_remove = 1
+
+        # figure out what happens if the snake lands on a fruit
+        for food in foods:
+            if new_head == food.position:
+                collided_food = food
+                if food.type in ["normal", "speed"]:
+                    segments_to_remove = 0
+                elif food.type == "danger":
+                    if previous_length == 1:
+                        game_over = True
+                    else:
+                        segments_to_remove = 2
+                break
+
+        # only check collision against the body that will still remain this frame
+        collision_body = snake[:-segments_to_remove] if segments_to_remove > 0 else snake
+        if new_head in collision_body:
             game_over = True
 
         if not game_over:
             snake.insert(0, new_head)
-            segments_to_remove = 1
 
-            for food in foods[:]:
-                if new_head == food.position:
-                    if food.type in ["normal", "speed"]:
-                        segments_to_remove = 0
+            if collided_food is not None:
+                if collided_food.type == "speed":
+                    speed += 2
 
-                        if food.type == "speed":
-                            speed += 2
-                    elif food.type == "danger":
-                        if previous_length == 1:
-                            game_over = True
-                        else:
-                            segments_to_remove = 2
-
-                    foods.remove(food)
-                    foods.append(Food(snake))
-                    break
+                foods.remove(collided_food)
+                foods.append(Food(snake))
 
             for _ in range(segments_to_remove):
                 if snake:
@@ -117,6 +131,7 @@ while running:
         if len(snake) < 1:
             game_over = True
 
+    # draw the snake, fruit, border, and text
     for segment in snake:
         pygame.draw.rect(screen, (0, 255, 0), (*segment, BLOCK_SIZE, BLOCK_SIZE))
 
