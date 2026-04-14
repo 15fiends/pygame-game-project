@@ -1,63 +1,66 @@
-# Snake Game Project
+# Snake Chaos
 
-This is my snake game made with Python and Pygame. I started with a basic snake game idea and then added different fruit types to make it more interesting.
+This is my snake game project made with Python and Pygame. I started with the basic idea of Snake and then added different fruit types to make the game more interesting and less predictable.
 
-## How the game works
+## How to play
 
-The snake moves around the screen and eats fruit.
+The goal is to move the snake around the screen, eat fruit, and keep increasing your score without losing.
+
+### Controls
+
+- `W` moves up
+- `A` moves left
+- `S` moves down
+- `D` moves right
+- `R` restarts the game after game over
+
+### Fruit types
 
 - Red fruit is normal fruit and makes the snake grow
-- Yellow fruit is a speed fruit and makes the snake grow while also making the game faster
+- Yellow fruit is speed fruit and makes the snake grow while also speeding up the game
 - Purple fruit is danger fruit and makes the snake shrink
 - If the snake is only length 1 and hits danger fruit, the game ends
 
 The score is based on the snake's length.
 
-## Twist / originality
+## What makes this game different
 
-The main twist in my game is that not all fruit helps the player. Some fruit is good, some makes the game faster, and some actually hurts the player. I wanted it to feel less predictable than a normal snake game.
+The main twist in my game is that not every fruit helps the player in the same way. Some fruit is helpful, some makes the game more difficult, and some can actually hurt you. I wanted the game to feel a little less predictable than a normal snake game.
 
-## Controls
+## Code organization
 
-- `W` = up
-- `A` = left
-- `S` = down
-- `D` = right
-- `R` = restart after game over
+- `src/main.py` contains the main playable version of the game
+- `Food` handles the fruit types, colors, and spawn positions
+- `reset_game()` resets the snake, direction, foods, speed, and game over state
+- The main loop handles player input, movement, collisions, score updates, drawing, and restarting
+- `dist/main.py` is an extra file from earlier work in the project
+- `.vscode/settings.json` keeps GitDoc enabled for the class requirement
 
-## Files in this project
+## Assets
 
-- `src/main.py` - main game code
-- `dist/main.py` - basic test file / extra file from earlier work
-- `README.md` - project explanation
+This version of the game does not use separate asset files like images, sprite sheets, or sound effects. The snake, fruit, border, and text are all drawn directly in Pygame using shapes, colors, and built-in text rendering.
+
+## Problems I ran into
+
+One of the biggest problems I had was with the scoring logic. At one point, every time I ate a fruit, the score went up by 2 instead of 1. I figured out that the snake length was being updated in the wrong order, so the game was basically counting extra length when it should not have.
+
+I also had a problem where the danger fruit was not working correctly when the snake was very short. To figure these issues out, I went through the game loop step by step and checked when the snake head was added, when the tail was removed, and when the fruit collision was being processed. Once I fixed the order of those updates, the score and danger fruit started working the way they were supposed to.
 
 ## What I learned
 
-One thing I learned from this project is that small logic mistakes can cause weird problems in games. I had an issue where the score was jumping by 2 instead of 1, and the danger fruit was not working correctly when the snake was very short. Fixing that helped me understand game loops and collision logic better.
-
-I also learned more about using GitHub to save and update my work.
+This project helped me understand game loops, collision logic, and how small logic mistakes can create bigger gameplay problems. It also helped me practice using GitHub to track changes to my project.
 
 ## Next steps
 
 If I keep working on this project, I would want to:
 
-- add a start screen
-- add sound effects
 - improve the graphics
-- maybe add levels or obstacles
-- show a high score
+- add sound effects
+- add a start screen
+- add a high score system
+- keep testing and polishing the gameplay
 
-## Demo / presentation notes
-
-If I am showing this project, I should explain:
-
-1. what the game is
-2. how to control it
-3. the different fruit types
-4. what bug I fixed during development
-5. what I would improve next
-
-## How to run it
+## How to run the game
 
 Make sure Python and Pygame are installed, then run:
 

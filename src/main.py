@@ -18,9 +18,6 @@ def draw_text(text, x, y):
     screen.blit(img, (x, y))
 
 
-# =========================
-# FOOD
-# =========================
 class Food:
     def __init__(self, snake):
         self.type = random.choice(["normal", "speed", "danger"])
@@ -46,9 +43,6 @@ class Food:
         pygame.draw.rect(screen, color, (*self.position, BLOCK_SIZE, BLOCK_SIZE))
 
 
-# =========================
-# RESET
-# =========================
 def reset_game():
     snake = [(300, 300)]
     direction = (BLOCK_SIZE, 0)
@@ -62,13 +56,9 @@ snake, direction, foods, speed, game_over = reset_game()
 running = True
 
 
-# =========================
-# MAIN LOOP
-# =========================
 while running:
     screen.fill((0, 0, 0))
 
-    # EVENTS
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
@@ -87,20 +77,15 @@ while running:
             if game_over and event.key == pygame.K_r:
                 snake, direction, foods, speed, game_over = reset_game()
 
-    # =========================
-    # GAME LOGIC
-    # =========================
     if not game_over:
         previous_length = len(snake)
         head_x, head_y = snake[0]
         new_head = (head_x + direction[0], head_y + direction[1])
 
-        # Wall collision
         if (new_head[0] < 0 or new_head[0] >= WIDTH or
             new_head[1] < 0 or new_head[1] >= HEIGHT):
             game_over = True
 
-        # Self collision
         if new_head in snake:
             game_over = True
 
@@ -108,7 +93,6 @@ while running:
             snake.insert(0, new_head)
             segments_to_remove = 1
 
-            # FOOD LOGIC (SCORE = LENGTH)
             for food in foods[:]:
                 if new_head == food.position:
                     if food.type in ["normal", "speed"]:
@@ -130,13 +114,9 @@ while running:
                 if snake:
                     snake.pop()
 
-        # Safety
         if len(snake) < 1:
             game_over = True
 
-    # =========================
-    # DRAW
-    # =========================
     for segment in snake:
         pygame.draw.rect(screen, (0, 255, 0), (*segment, BLOCK_SIZE, BLOCK_SIZE))
 
